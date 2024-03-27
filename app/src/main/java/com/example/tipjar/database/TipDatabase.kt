@@ -9,25 +9,24 @@ import com.example.tipjar.database.entity.TipHistory
 
 @Database(entities = [TipHistory::class], version = 1, exportSchema = false)
 abstract class TipDatabase : RoomDatabase(), TipJarDaos {
-
     companion object {
-
         @Volatile
-        private var INSTANCE: TipDatabase? = null
+        private var tipDataBase: TipDatabase? = null
 
         fun getInstance(context: Context): TipDatabase {
             synchronized(this) {
-                var instance = INSTANCE
+                var instance = tipDataBase
 
                 if (instance == null) {
-                    instance = Room.databaseBuilder(
-                        context.applicationContext,
-                        TipDatabase::class.java,
-                        "tip_jar_database"
-                    )
-                        .fallbackToDestructiveMigration()
-                        .build()
-                    INSTANCE = instance
+                    instance =
+                        Room.databaseBuilder(
+                            context.applicationContext,
+                            TipDatabase::class.java,
+                            "tip_jar_database",
+                        )
+                            .fallbackToDestructiveMigration()
+                            .build()
+                    tipDataBase = instance
                 }
                 return instance
             }

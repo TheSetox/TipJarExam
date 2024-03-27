@@ -4,4 +4,5 @@ plugins {
     id 'com.google.dagger.hilt.android' version '2.47' apply false
     id "org.jetbrains.kotlin.kapt" version "1.9.21"
     id("com.google.devtools.ksp") version "1.9.21-1.0.15"
+    id("com.diffplug.spotless") version "6.22.0"
 }

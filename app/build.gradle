@@ -5,6 +5,7 @@ plugins {
     id 'com.google.dagger.hilt.android'
     id 'com.google.devtools.ksp'
 }
+apply from: "$rootDir/code-formatting.gradle"
 
 android {
     namespace 'com.example.tipjar'
