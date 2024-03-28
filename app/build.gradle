@@ -5,7 +5,8 @@ plugins {
     id 'com.google.dagger.hilt.android'
     id 'com.google.devtools.ksp'
 }
-apply from: "$rootDir/code-formatting.gradle"
+apply from: "$rootDir/scripts/code-formatting.gradle"
+apply from: "$rootDir/scripts/coverage.gradle"
 
 android {
     namespace 'com.example.tipjar'
@@ -39,7 +40,10 @@ android {
 dependencies {
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'com.google.android.material:material:1.11.0'
+
+    // Test
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito.kotlin:mockito-kotlin:3.2.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 

@@ -1,0 +1,16 @@
+apply plugin: 'org.jetbrains.kotlinx.kover'
+koverReport {
+    filters {
+        // filters for all reports
+    }
+
+    verify {
+        // verification rules for all reports
+    }
+
+    androidReports("debug") {
+        html { /* default HTML report config */ }
+        verify { /* default verification config */ }
+        log { /* default logging config */ }
+    }
+}

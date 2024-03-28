@@ -1,4 +1,4 @@
-package com.example.tipjar.database.dao
+package com.example.tipjar.model.database.dao
 
 import androidx.room.Dao
 

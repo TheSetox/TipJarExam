@@ -1,13 +1,13 @@
-package com.example.tipjar.database
+package com.example.tipjar.model.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.tipjar.database.dao.TipJarDaos
-import com.example.tipjar.database.entity.TipHistory
+import com.example.tipjar.model.database.dao.TipJarDaos
+import com.example.tipjar.model.entity.PaymentHistory
 
-@Database(entities = [TipHistory::class], version = 1, exportSchema = false)
+@Database(entities = [PaymentHistory::class], version = 1, exportSchema = false)
 abstract class TipDatabase : RoomDatabase(), TipJarDaos {
     companion object {
         @Volatile

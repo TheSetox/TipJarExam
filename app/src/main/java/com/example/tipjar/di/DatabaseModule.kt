@@ -1,7 +1,7 @@
 package com.example.tipjar.di
 
 import android.content.Context
-import com.example.tipjar.database.TipDatabase
+import com.example.tipjar.model.database.TipDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
