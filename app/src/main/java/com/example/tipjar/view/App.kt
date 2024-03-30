@@ -1,5 +1,12 @@
 package com.example.tipjar.view
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,13 +22,65 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.tipjar.R
+import com.example.tipjar.view.screen.HistoryScreen
 import com.example.tipjar.view.screen.PaymentScreen
 
 @Composable
 fun App() {
-    MaterialTheme { PaymentScreen() }
+    MaterialTheme {
+        val navController = rememberNavController()
+        NavHost(navController = navController, startDestination = Route.Payment.name) {
+            composable(
+                route = Route.Payment.name,
+            ) {
+                PaymentScreen {
+                    // When history button is pressed
+                    navController.navigate(Route.History.name)
+                }
+            }
+            composable(
+                route = Route.History.name,
+                enterTransition = {
+                    fadeIn(
+                        animationSpec =
+                            tween(
+                                durationMillis = 300,
+                                easing = LinearEasing,
+                            ),
+                    ) +
+                        slideIntoContainer(
+                            animationSpec = tween(300, easing = EaseIn),
+                            towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                        )
+                },
+                exitTransition = {
+                    fadeOut(
+                        animationSpec =
+                            tween(
+                                durationMillis = 300,
+                                easing = LinearEasing,
+                            ),
+                    ) +
+                        slideOutOfContainer(
+                            animationSpec = tween(300, easing = EaseOut),
+                            towards = AnimatedContentTransitionScope.SlideDirection.End,
+                        )
+                },
+            ) {
+                HistoryScreen {
+                    // When back button is pressed
+                    navController.popBackStack()
+                }
+            }
+        }
+    }
 }
+
+private enum class Route { History, Payment }
 
 @Preview(showBackground = true)
 @Composable

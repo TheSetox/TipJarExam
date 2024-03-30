@@ -19,12 +19,12 @@ import com.example.tipjar.R
 import com.example.tipjar.view.labelTextStyle
 
 @Composable
-fun HistoryTopBar() {
+fun HistoryTopBar(navigate: () -> Unit = {}) {
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         val modifier = Modifier.padding(8.dp)
 
         Text(modifier = modifier, text = "SAVED PAYMENTS", style = labelTextStyle)
-        BackButton(modifier)
+        BackButton(modifier, navigate)
         HorizontalDivider(
             modifier = Modifier.align(Alignment.BottomCenter),
             thickness = 1.dp,
@@ -34,14 +34,17 @@ fun HistoryTopBar() {
 }
 
 @Composable
-private fun BoxScope.BackButton(modifier: Modifier) {
+private fun BoxScope.BackButton(
+    modifier: Modifier,
+    navigate: () -> Unit = {},
+) {
     Box(
         contentAlignment = Alignment.Center,
         modifier =
             modifier
                 .size(50.dp)
                 .align(Alignment.CenterStart)
-                .clickable { },
+                .clickable { navigate() },
     ) {
         Image(
             painter = painterResource(R.drawable.button_back),

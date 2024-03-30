@@ -22,7 +22,7 @@ fun TopBarPreview() {
 }
 
 @Composable
-fun PaymentTopBar() {
+fun PaymentTopBar(navigate: () -> Unit = {}) {
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         val modifier = Modifier.padding(8.dp)
 
@@ -31,19 +31,22 @@ fun PaymentTopBar() {
             painter = painterResource(R.drawable.tipjar_logo),
             contentDescription = "Tip Jar Logo",
         )
-        HistoryButton(modifier)
+        HistoryButton(modifier, navigate)
     }
 }
 
 @Composable
-private fun BoxScope.HistoryButton(modifier: Modifier) {
+private fun BoxScope.HistoryButton(
+    modifier: Modifier,
+    navigate: () -> Unit = {},
+) {
     Box(
         contentAlignment = Alignment.Center,
         modifier =
             modifier
                 .size(50.dp)
                 .align(Alignment.CenterEnd)
-                .clickable { },
+                .clickable { navigate() },
     ) {
         Image(
             painter = painterResource(R.drawable.button_payment_history),

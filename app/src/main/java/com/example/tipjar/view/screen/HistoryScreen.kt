@@ -84,7 +84,7 @@ internal val defaultPaymentHistory =
     )
 
 @Composable
-fun HistoryScreen() {
+fun HistoryScreen(navigate: () -> Unit = {}) {
     // TODO Remove once database is connected or debug variant is setup.
     val listOfPayment = listOf(defaultPaymentHistory, defaultPaymentHistory)
     val shouldView = remember { mutableStateOf(false) }
@@ -92,7 +92,7 @@ fun HistoryScreen() {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { HistoryTopBar() },
+        topBar = { HistoryTopBar(navigate) },
         content = {
             it.HistoryContent(listOfPayment) {
                 shouldView.value = true

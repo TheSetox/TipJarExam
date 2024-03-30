@@ -24,10 +24,10 @@ fun PaymentScreenPreview() {
 }
 
 @Composable
-fun PaymentScreen() {
+fun PaymentScreen(navigate: () -> Unit = {}) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { PaymentTopBar() },
+        topBar = { PaymentTopBar(navigate) },
         content = { it.PaymentContent() },
     )
 }
