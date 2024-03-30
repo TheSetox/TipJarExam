@@ -14,11 +14,11 @@ interface PaymentRepository {
 
     fun createReceiptImageIntent(): Intent
 
-    fun savePayment(payment: Payment)
+    suspend fun savePayment(payment: Payment)
 
-    fun getListOfPayments(): List<PaymentHistory>
+    suspend fun getListOfPayments(): List<PaymentHistory>
 
-    fun getPayment(id: String): PaymentHistory
+    suspend fun getPayment(id: String): PaymentHistory
 
     fun getImageReceipt(id: String): File
 }

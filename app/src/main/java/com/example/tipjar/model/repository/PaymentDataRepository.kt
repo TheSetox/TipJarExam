@@ -33,7 +33,7 @@ class PaymentDataRepository(
         return imageSource.createCaptureImageIntent(timeStamp)
     }
 
-    override fun savePayment(payment: Payment) {
+    override suspend fun savePayment(payment: Payment) {
         val timeStamp = timeStampSource.getTimeStamp()
         val paymentHistory =
             PaymentHistory(
@@ -45,11 +45,11 @@ class PaymentDataRepository(
         localSource.savePayment(paymentHistory)
     }
 
-    override fun getListOfPayments(): List<PaymentHistory> {
+    override suspend fun getListOfPayments(): List<PaymentHistory> {
         return localSource.getListOfPayments()
     }
 
-    override fun getPayment(id: String): PaymentHistory {
+    override suspend fun getPayment(id: String): PaymentHistory {
         return localSource.getPayment(id)
     }
 

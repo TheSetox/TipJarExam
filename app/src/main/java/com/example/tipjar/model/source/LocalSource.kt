@@ -3,9 +3,9 @@ package com.example.tipjar.model.source
 import com.example.tipjar.model.entity.PaymentHistory
 
 interface LocalSource {
-    fun savePayment(paymentHistory: PaymentHistory)
+    suspend fun savePayment(paymentHistory: PaymentHistory)
 
-    fun getListOfPayments(): List<PaymentHistory>
+    suspend fun getListOfPayments(): List<PaymentHistory>
 
-    fun getPayment(id: String): PaymentHistory
+    suspend fun getPayment(id: String): PaymentHistory
 }

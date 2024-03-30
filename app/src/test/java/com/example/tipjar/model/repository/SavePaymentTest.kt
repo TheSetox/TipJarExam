@@ -1,6 +1,7 @@
 package com.example.tipjar.model.repository
 
 import com.example.tipjar.model.entity.PaymentHistory
+import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -26,47 +27,50 @@ class SavePaymentTest : PaymentRepositoryTest() {
     }
 
     @Test
-    fun `when saving payment, verify if getTimeStamp is called`() {
-        // Arrange
-        timeStampSource = mock { on { getTimeStamp() } doReturn "" }
-        initializeRepository(currentTimeStampSource = timeStampSource)
+    fun `when saving payment, verify if getTimeStamp is called`() =
+        runTest {
+            // Arrange
+            timeStampSource = mock { on { getTimeStamp() } doReturn "" }
+            initializeRepository(currentTimeStampSource = timeStampSource)
 
-        // Act
-        repository.savePayment(defaultPayment)
+            // Act
+            repository.savePayment(defaultPayment)
 
-        // Assert
-        verify(timeStampSource).getTimeStamp()
-    }
-
-    @Test
-    fun `when saving payment with empty timestamp, verify if savePayment is called`() {
-        // Arrange
-        timeStampSource = mock { on { getTimeStamp() } doReturn "" }
-        initializeRepository(
-            currentTimeStampSource = timeStampSource,
-            currentLocalSource = localSource,
-        )
-
-        // Act
-        repository.savePayment(defaultPayment)
-
-        // Assert
-        verify(localSource).savePayment(defaultPaymentHistory)
-    }
+            // Assert
+            verify(timeStampSource).getTimeStamp()
+        }
 
     @Test
-    fun `when saving payment with timestamp, verify if savePayment with timeStamp is called`() {
-        // Arrange
-        timeStampSource = mock { on { getTimeStamp() } doReturn timeStamp }
-        initializeRepository(
-            currentTimeStampSource = timeStampSource,
-            currentLocalSource = localSource,
-        )
+    fun `when saving payment with empty timestamp, verify if savePayment is called`() =
+        runTest {
+            // Arrange
+            timeStampSource = mock { on { getTimeStamp() } doReturn "" }
+            initializeRepository(
+                currentTimeStampSource = timeStampSource,
+                currentLocalSource = localSource,
+            )
 
-        // Act
-        repository.savePayment(defaultPayment)
+            // Act
+            repository.savePayment(defaultPayment)
 
-        // Assert
-        verify(localSource).savePayment(paymentHistoryWithTimeStamp)
-    }
+            // Assert
+            verify(localSource).savePayment(defaultPaymentHistory)
+        }
+
+    @Test
+    fun `when saving payment with timestamp, verify if savePayment with timeStamp is called`() =
+        runTest {
+            // Arrange
+            timeStampSource = mock { on { getTimeStamp() } doReturn timeStamp }
+            initializeRepository(
+                currentTimeStampSource = timeStampSource,
+                currentLocalSource = localSource,
+            )
+
+            // Act
+            repository.savePayment(defaultPayment)
+
+            // Assert
+            verify(localSource).savePayment(paymentHistoryWithTimeStamp)
+        }
 }

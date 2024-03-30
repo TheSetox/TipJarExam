@@ -4,11 +4,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.tipjar.model.database.dao.TipJarDaos
+import com.example.tipjar.model.database.dao.PaymentDaos
 import com.example.tipjar.model.entity.PaymentHistory
 
 @Database(entities = [PaymentHistory::class], version = 1, exportSchema = false)
-abstract class TipDatabase : RoomDatabase(), TipJarDaos {
+abstract class TipDatabase : RoomDatabase(), PaymentDaos {
     companion object {
         @Volatile
         private var tipDataBase: TipDatabase? = null
