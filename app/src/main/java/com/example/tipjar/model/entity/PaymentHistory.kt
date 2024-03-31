@@ -9,4 +9,22 @@ data class PaymentHistory(
     @ColumnInfo(name = "amount") val amount: Float,
     @ColumnInfo(name = "tip") val tip: Float,
     @ColumnInfo(name = "image") val image: String,
-)
+) {
+    companion object {
+        fun Companion.defaultData(): PaymentHistory {
+            return PaymentHistory("", 0F, 0F, "")
+        }
+
+        private fun Companion.previewData(): PaymentHistory {
+            return PaymentHistory("February 20, 2024", 100F, 10F, "")
+        }
+
+        private fun Companion.previewData2(): PaymentHistory {
+            return PaymentHistory("February 21, 2024", 200F, 20F, "")
+        }
+
+        fun Companion.previewList(): List<PaymentHistory> {
+            return listOf(previewData(), previewData2())
+        }
+    }
+}

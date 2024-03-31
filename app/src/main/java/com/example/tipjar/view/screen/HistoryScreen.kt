@@ -16,6 +16,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tipjar.R
 import com.example.tipjar.model.entity.PaymentHistory
+import com.example.tipjar.model.entity.PaymentHistory.Companion.defaultData
+import com.example.tipjar.view.LocalPreviewMode
 import com.example.tipjar.view.component.history.ViewPaymentHistoryDialog
 import com.example.tipjar.view.component.topbar.HistoryTopBar
 import com.example.tipjar.view.labelTextStyle
@@ -36,46 +40,71 @@ import com.example.tipjar.view.normalTextStyle
 import com.example.tipjar.view.subtitleTextStyle
 import com.example.tipjar.viewmodel.HistoryViewModel
 import com.example.tipjar.viewmodel.PaymentState
+import com.example.tipjar.viewmodel.PaymentState.Companion.showPreviewList
 
 @Preview
 @Composable
 fun HistoryScreenPreview() {
-    HistoryScreen()
+    CompositionLocalProvider(LocalPreviewMode provides true) {
+        HistoryScreen()
+    }
 }
 
 @Composable
-fun HistoryScreen(
-    historyViewModel: HistoryViewModel = hiltViewModel(),
-    navigate: () -> Unit = {},
+fun PrepareScreen(
+    onPreview: () -> Unit,
+    onViewModel: @Composable () -> Unit,
+    loadScreen: @Composable () -> Unit,
+    onDialog: @Composable () -> Unit,
 ) {
-    val paymentState = historyViewModel.state.collectAsState()
-    historyViewModel.getListOfPayments()
-    var listOfPayment = emptyList<PaymentHistory>()
-    when (val state = paymentState.value) {
-        PaymentState.Load -> {}
-        is PaymentState.ShowList -> listOfPayment = state.list
+    if (LocalPreviewMode.current) {
+        onPreview()
+    } else {
+        onViewModel()
     }
-    val shouldView = remember { mutableStateOf(false) }
-    val shouldDismiss = remember { mutableStateOf(false) }
-    val paymentHistory = remember { mutableStateOf(PaymentHistory("", 0F, 0F, "")) }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = { HistoryTopBar(navigate) },
-        content = {
-            it.HistoryContent(listOfPayment) {
-                shouldView.value = true
-                shouldDismiss.value = false
-                paymentHistory.value = it
+    loadScreen()
+    onDialog()
+}
+
+@Composable
+fun HistoryScreen(navigate: () -> Unit = {}) {
+    var paymentState: State<PaymentState> = remember { mutableStateOf(PaymentState.Empty) }
+    val shouldDialogShow = remember { mutableStateOf(false) }
+    val paymentHistory = remember { mutableStateOf(PaymentHistory.defaultData()) }
+
+    PrepareScreen(
+        onPreview = { paymentState = mutableStateOf(PaymentState.showPreviewList()) },
+        onViewModel = {
+            val historyViewModel: HistoryViewModel = hiltViewModel()
+            paymentState = historyViewModel.state.collectAsState()
+            historyViewModel.getListOfPayments()
+        },
+        loadScreen = {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = { HistoryTopBar(navigate) },
+                content = { paddingValues ->
+                    when (val state = paymentState.value) {
+                        PaymentState.Empty -> {} // Do nothing
+                        is PaymentState.ShowList -> {
+                            paddingValues.HistoryContent(state.list) { item ->
+                                shouldDialogShow.value = true
+                                paymentHistory.value = item
+                            }
+                        }
+                    }
+                },
+            )
+        },
+        onDialog = {
+            if (shouldDialogShow.value) {
+                ViewPaymentHistoryDialog(paymentHistory.value) {
+                    shouldDialogShow.value = false
+                }
             }
         },
     )
-    if (shouldView.value) {
-        ViewPaymentHistoryDialog(paymentHistory.value) {
-            shouldView.value = false
-            shouldDismiss.value = true
-        }
-    }
 }
 
 @Composable

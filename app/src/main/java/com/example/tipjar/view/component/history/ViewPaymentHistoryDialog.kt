@@ -32,18 +32,15 @@ fun ViewPaymentHistoryDialog(
                 dismissOnClickOutside = true,
             ),
     ) {
+        val modifier = Modifier.clip(RoundedCornerShape(16.dp))
         Column {
             Image(
-                modifier = Modifier.clip(RoundedCornerShape(16.dp)),
+                modifier = modifier,
                 painter = painterResource(R.drawable.sample_receipt_image),
                 contentDescription = null,
             )
             Spacer(Modifier.size(12.dp))
-            Box(
-                Modifier
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color.White),
-            ) {
+            Box(modifier.background(Color.White)) {
                 HistorySummary(paymentHistory)
             }
         }

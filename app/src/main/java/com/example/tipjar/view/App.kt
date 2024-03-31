@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -34,51 +35,59 @@ fun App() {
     MaterialTheme {
         val navController = rememberNavController()
         NavHost(navController = navController, startDestination = Route.Payment.name) {
-            composable(
-                route = Route.Payment.name,
-            ) {
-                PaymentScreen {
-                    // When history button is pressed
-                    navController.navigate(Route.History.name)
-                }
+            composable(Route.Payment.name) {
+                PaymentScreen(
+                    navigate = {
+                        // When history button is pressed
+                        navController.navigate(Route.History.name)
+                    },
+                )
             }
             composable(
                 route = Route.History.name,
-                enterTransition = {
-                    fadeIn(
-                        animationSpec =
-                            tween(
-                                durationMillis = 300,
-                                easing = LinearEasing,
-                            ),
-                    ) +
-                        slideIntoContainer(
-                            animationSpec = tween(300, easing = EaseIn),
-                            towards = AnimatedContentTransitionScope.SlideDirection.Start,
-                        )
-                },
-                exitTransition = {
-                    fadeOut(
-                        animationSpec =
-                            tween(
-                                durationMillis = 300,
-                                easing = LinearEasing,
-                            ),
-                    ) +
-                        slideOutOfContainer(
-                            animationSpec = tween(300, easing = EaseOut),
-                            towards = AnimatedContentTransitionScope.SlideDirection.End,
-                        )
-                },
+                enterTransition = { fadeInAnimation() + slideToStartAnimation() },
+                exitTransition = { fadeOutAnimation() + slideOutAnimation() },
             ) {
-                HistoryScreen {
-                    // When back button is pressed
-                    navController.popBackStack()
-                }
+                HistoryScreen(
+                    navigate = {
+                        // When back button is pressed
+                        navController.popBackStack()
+                    },
+                )
             }
         }
     }
 }
+
+private fun AnimatedContentTransitionScope<NavBackStackEntry>.slideToStartAnimation() =
+    slideIntoContainer(
+        animationSpec = tween(300, easing = EaseIn),
+        towards = AnimatedContentTransitionScope.SlideDirection.Start,
+    )
+
+private fun fadeInAnimation() =
+    fadeIn(
+        animationSpec =
+            tween(
+                durationMillis = 300,
+                easing = LinearEasing,
+            ),
+    )
+
+private fun AnimatedContentTransitionScope<NavBackStackEntry>.slideOutAnimation() =
+    slideOutOfContainer(
+        animationSpec = tween(300, easing = EaseOut),
+        towards = AnimatedContentTransitionScope.SlideDirection.End,
+    )
+
+private fun fadeOutAnimation() =
+    fadeOut(
+        animationSpec =
+            tween(
+                durationMillis = 300,
+                easing = LinearEasing,
+            ),
+    )
 
 private enum class Route { History, Payment }
 

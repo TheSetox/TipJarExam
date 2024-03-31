@@ -3,6 +3,7 @@ package com.example.tipjar.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tipjar.model.entity.PaymentHistory
+import com.example.tipjar.model.entity.PaymentHistory.Companion.previewList
 import com.example.tipjar.model.repository.PaymentRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,7 @@ import javax.inject.Inject
 class HistoryViewModel
     @Inject
     constructor(private val repository: PaymentRepository) : ViewModel() {
-        private val _state: MutableStateFlow<PaymentState> = MutableStateFlow(PaymentState.Load)
+        private val _state: MutableStateFlow<PaymentState> = MutableStateFlow(PaymentState.Empty)
 
         val state: StateFlow<PaymentState> get() = _state
 
@@ -26,7 +27,13 @@ class HistoryViewModel
     }
 
 sealed class PaymentState {
-    data object Load : PaymentState()
+    data object Empty : PaymentState()
 
     data class ShowList(val list: List<PaymentHistory>) : PaymentState()
+
+    companion object {
+        fun Companion.showPreviewList(): ShowList {
+            return ShowList(PaymentHistory.previewList())
+        }
+    }
 }
