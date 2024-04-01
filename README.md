@@ -24,4 +24,4 @@
 
 <img src="document/initial_state.png" width="300">   <img src="document/filled_state.png" width="300">
 
-<img src="document/history.png" width="300">   <img src="document/detail_view.png">
+<img src="document/history.png" width="300">   <img src="document/detail_view.png" width="300">
