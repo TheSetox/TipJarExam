@@ -1,9 +1,9 @@
 package com.example.tipjar.model.repository
 
-import android.content.Intent
 import com.example.tipjar.model.entity.Computation
 import com.example.tipjar.model.entity.Payment
 import com.example.tipjar.model.entity.PaymentHistory
+import com.example.tipjar.model.entity.ReceiptImage
 import java.io.File
 
 interface PaymentRepository {
@@ -17,7 +17,7 @@ interface PaymentRepository {
 
     fun computePayment(payment: Payment): Computation
 
-    fun createReceiptImageIntent(): Intent
+    fun createReceiptImageUri(): ReceiptImage
 
     suspend fun savePayment(payment: Payment)
 

@@ -24,12 +24,17 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
 import com.example.tipjar.R
 import com.example.tipjar.view.screen.HistoryScreen
 import com.example.tipjar.view.screen.PaymentScreen
+import com.example.tipjar.viewmodel.PaymentViewModel
 
 @Composable
-fun App() {
+fun App(
+    onViewModel: (PaymentViewModel) -> Unit,
+    onLaunchCamera: (String, Float) -> Unit,
+) {
     MaterialTheme {
         val navController = rememberNavController()
         NavHost(
@@ -43,9 +48,17 @@ fun App() {
                 exitTransition = { exitFromRightToLeftAnimation() },
             ) {
                 PaymentScreen(
+                    myViewModel = onViewModel,
+                    onLaunchCamera = onLaunchCamera,
                     navigate = {
                         // When history button is pressed
-                        navController.navigate(Route.History.name)
+                        navController.navigate(
+                            route = Route.History.name,
+                            navOptions =
+                                navOptions {
+                                    launchSingleTop = true
+                                },
+                        )
                     },
                 )
             }
@@ -88,8 +101,6 @@ private fun AnimatedContentTransitionScope<NavBackStackEntry>.exitFromRightToLef
         animationSpec = tween(300, easing = EaseIn),
         towards = AnimatedContentTransitionScope.SlideDirection.Start,
     )
-
-private enum class Route { History, Payment }
 
 @Preview(showBackground = true)
 @Composable

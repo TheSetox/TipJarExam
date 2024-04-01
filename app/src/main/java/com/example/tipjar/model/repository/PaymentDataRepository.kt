@@ -1,9 +1,9 @@
 package com.example.tipjar.model.repository
 
-import android.content.Intent
 import com.example.tipjar.model.entity.Computation
 import com.example.tipjar.model.entity.Payment
 import com.example.tipjar.model.entity.PaymentHistory
+import com.example.tipjar.model.entity.ReceiptImage
 import com.example.tipjar.model.source.ImageSource
 import com.example.tipjar.model.source.LocalSource
 import com.example.tipjar.model.source.PaymentSource
@@ -39,9 +39,10 @@ class PaymentDataRepository
             return paymentSource.computePayment(payment)
         }
 
-        override fun createReceiptImageIntent(): Intent {
+        override fun createReceiptImageUri(): ReceiptImage {
             val timeStamp = timeStampSource.getTimeStamp()
-            return imageSource.createCaptureImageIntent(timeStamp)
+            val uri = imageSource.createCaptureImageUri(timeStamp)
+            return ReceiptImage(uri, timeStamp)
         }
 
         override suspend fun savePayment(payment: Payment) {
@@ -58,7 +59,10 @@ class PaymentDataRepository
 
         override suspend fun getListOfPayments(): List<PaymentHistory> {
             return localSource.getListOfPayments().map {
-                it.copy(timestamp = timeStampSource.convertTimeStamp(it.timestamp))
+                it.copy(
+                    image = imageSource.getFileImage(it.timestamp).path,
+                    timestamp = timeStampSource.convertTimeStamp(it.timestamp),
+                )
             }
         }
 
