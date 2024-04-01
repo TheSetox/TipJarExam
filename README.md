@@ -13,6 +13,7 @@
 - Added spotless to enforce coding guidelines.
 - Added kover for test coverage.
 - Added simple github action.
+- Create development environment by creating a new build variant.
 
 
 ## TipJar Architecture
@@ -21,6 +22,6 @@
 
 ## Screenshot sample
 
-![initial_state.png](document/initial_state.png) ![filled_state.png](document/filled_state.png)
+<img src="document/initial_state.png" width="300">   <img src="document/filled_state.png" width="300">
 
-![history.png](document/history.png) ![detail_view.png](document/detail_view.png)
+<img src="document/history.png" width="300">   <img src="document/detail_view.png">
