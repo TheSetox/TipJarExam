@@ -4,11 +4,16 @@ import android.content.Intent
 import com.example.tipjar.model.entity.Computation
 import com.example.tipjar.model.entity.Payment
 import com.example.tipjar.model.entity.PaymentHistory
-import com.example.tipjar.model.entity.Validation
 import java.io.File
 
 interface PaymentRepository {
-    fun validatePayment(payment: Payment): Validation
+    fun updateAmount(amount: String): String
+
+    fun updatePercentage(percentage: String): String
+
+    fun addPerPerson(countPerPerson: Int): Int
+
+    fun reducePerPerson(countPerPerson: Int): Int
 
     fun computePayment(payment: Payment): Computation
 
@@ -17,8 +22,6 @@ interface PaymentRepository {
     suspend fun savePayment(payment: Payment)
 
     suspend fun getListOfPayments(): List<PaymentHistory>
-
-    suspend fun getPayment(id: String): PaymentHistory
 
     fun getImageReceipt(id: String): File
 }

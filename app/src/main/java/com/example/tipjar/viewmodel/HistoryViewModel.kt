@@ -15,21 +15,22 @@ import javax.inject.Inject
 class HistoryViewModel
     @Inject
     constructor(private val repository: PaymentRepository) : ViewModel() {
-        private val _state: MutableStateFlow<PaymentState> = MutableStateFlow(PaymentState.Empty)
+        private val _state: MutableStateFlow<PaymentHistoryState> =
+            MutableStateFlow(PaymentHistoryState.Empty)
 
-        val state: StateFlow<PaymentState> get() = _state
+        val state: StateFlow<PaymentHistoryState> get() = _state
 
         fun getListOfPayments() =
             viewModelScope.launch {
                 val listOfPayments = repository.getListOfPayments()
-                _state.emit(PaymentState.ShowList(listOfPayments))
+                _state.emit(PaymentHistoryState.ShowList(listOfPayments))
             }
     }
 
-sealed class PaymentState {
-    data object Empty : PaymentState()
+sealed class PaymentHistoryState {
+    data object Empty : PaymentHistoryState()
 
-    data class ShowList(val list: List<PaymentHistory>) : PaymentState()
+    data class ShowList(val list: List<PaymentHistory>) : PaymentHistoryState()
 
     companion object {
         fun Companion.showPreviewList(): ShowList {

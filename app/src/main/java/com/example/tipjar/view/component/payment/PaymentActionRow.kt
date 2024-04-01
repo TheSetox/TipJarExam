@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -35,9 +37,9 @@ fun PaymentActionRowPreview() {
 fun CheckBoxPreview() {
     val modifier = Modifier.padding(20.dp)
     Column(modifier) {
-        CheckedBox()
+        CheckedBox {}
         Spacer(modifier)
-        UnCheckedBox()
+        UnCheckedBox {}
     }
 }
 
@@ -48,27 +50,36 @@ fun PaymentScreenForPaymentActionPreview() {
 }
 
 @Composable
-fun PaymentActionRow() {
+fun PaymentActionRow(onSave: (Boolean) -> Unit = {}) {
+    val isChecked = rememberSaveable { mutableStateOf(false) }
     Column {
-        TakePhotoCheckBox()
+        TakePhotoCheckBox(isChecked = isChecked.value) { isChecked.value = it }
         Spacer(Modifier.padding(12.dp))
-        SavePaymentButton()
+        SavePaymentButton(isChecked = isChecked.value, onSave = onSave)
         Spacer(Modifier.padding(8.dp))
     }
 }
 
 @Composable
-private fun TakePhotoCheckBox() {
+private fun TakePhotoCheckBox(
+    isChecked: Boolean,
+    onChecked: (Boolean) -> Unit,
+) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        // TODO Add logic for checking the box
-        UnCheckedBox()
+        when (isChecked) {
+            true -> CheckedBox { onChecked(false) }
+            false -> UnCheckedBox { onChecked(true) }
+        }
         Spacer(Modifier.padding(8.dp))
         Text(text = "Take photo of receipt", style = labelTextStyle)
     }
 }
 
 @Composable
-private fun SavePaymentButton() {
+private fun SavePaymentButton(
+    isChecked: Boolean,
+    onSave: (Boolean) -> Unit,
+) {
     Box(
         contentAlignment = Alignment.Center,
         modifier =
@@ -81,7 +92,7 @@ private fun SavePaymentButton() {
                         ),
                     shape = RoundedCornerShape(16.dp),
                 )
-                .clickable { },
+                .clickable { onSave(isChecked) },
     ) {
         Text(
             text = "Save Payment",
@@ -92,16 +103,22 @@ private fun SavePaymentButton() {
 }
 
 @Composable
-private fun UnCheckedBox() {
-    Box(contentAlignment = Alignment.Center) {
+private fun UnCheckedBox(onClicked: () -> Unit) {
+    Box(
+        Modifier.clickable { onClicked() },
+        contentAlignment = Alignment.Center,
+    ) {
         PaymentActionImage(R.drawable.unchecked_box)
         PaymentActionImage(R.drawable.image_uncheck)
     }
 }
 
 @Composable
-private fun CheckedBox() {
-    Box(contentAlignment = Alignment.Center) {
+private fun CheckedBox(onClicked: () -> Unit) {
+    Box(
+        Modifier.clickable { onClicked() },
+        contentAlignment = Alignment.Center,
+    ) {
         PaymentActionImage(R.drawable.check_box)
         PaymentActionImage(R.drawable.image_checked)
     }

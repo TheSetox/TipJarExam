@@ -1,6 +1,7 @@
 package com.example.tipjar.view.component.payment
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,7 +25,7 @@ import com.example.tipjar.view.screen.PaymentScreen
 @Preview(showBackground = true)
 @Composable
 fun PeopleCounterRowPreview() {
-    PeopleCounterRow()
+    PeopleCounterRow(1)
 }
 
 @Preview(showBackground = true)
@@ -34,16 +35,24 @@ fun PaymentScreenPreview() {
 }
 
 @Composable
-fun PeopleCounterRow() {
+fun PeopleCounterRow(
+    counter: Int,
+    onAddPeople: Int.() -> Unit = {},
+    onReducePeople: Int.() -> Unit = {},
+) {
     Column {
         Text(text = "How many people?", style = labelTextStyle)
         Spacer(Modifier.padding(8.dp))
-        CounterRow()
+        CounterRow(counter, onAddPeople, onReducePeople)
     }
 }
 
 @Composable
-private fun CounterRow() {
+private fun CounterRow(
+    counter: Int,
+    onAddPeople: Int.() -> Unit,
+    onReducePeople: Int.() -> Unit,
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -58,11 +67,19 @@ private fun CounterRow() {
                 )
         val spacerModifier = Modifier.weight(1F)
 
-        CircleActionButton(text = "+", modifier = circleModifier)
+        CircleActionButton(
+            text = "+",
+            modifier = circleModifier,
+            onActionClicked = { counter.onAddPeople() },
+        )
         Spacer(spacerModifier)
-        Text(text = "1", style = editTextStyle)
+        Text(text = counter.toString(), style = editTextStyle)
         Spacer(spacerModifier)
-        CircleActionButton(text = "-", modifier = circleModifier)
+        CircleActionButton(
+            text = "-",
+            modifier = circleModifier,
+            onActionClicked = { counter.onReducePeople() },
+        )
     }
 }
 
@@ -70,8 +87,9 @@ private fun CounterRow() {
 private fun CircleActionButton(
     text: String,
     modifier: Modifier,
+    onActionClicked: () -> Unit,
 ) {
-    Box(contentAlignment = Alignment.Center, modifier = modifier) {
+    Box(contentAlignment = Alignment.Center, modifier = modifier.clickable { onActionClicked() }) {
         Text(text = text, style = controllerTextStyle)
     }
 }

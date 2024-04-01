@@ -22,8 +22,20 @@ fun TopBarPreview() {
 fun EntryBoxPreview() {
     Column {
         Column {
-            EntryBox(label = "Enter amount", hintText = "100.00", helperText = "$", helperPosition = Position.LEFT)
-            EntryBox(label = "% TIP", hintText = "10.00", helperText = "%", helperPosition = Position.RIGHT)
+            EntryBox(
+                mainText = "",
+                label = "Enter amount",
+                hintText = "100.00",
+                helperText = "$",
+                helperPosition = Position.LEFT,
+            )
+            EntryBox(
+                mainText = "",
+                label = "% TIP",
+                hintText = "10.00",
+                helperText = "%",
+                helperPosition = Position.RIGHT,
+            )
         }
     }
 }
@@ -31,13 +43,13 @@ fun EntryBoxPreview() {
 @Preview(showBackground = true)
 @Composable
 fun PeopleCounterRowPreview() {
-    PeopleCounterRow()
+    PeopleCounterRow(1)
 }
 
 @Preview(showBackground = true)
 @Composable
 fun ComputationSummaryRowPreview() {
-    ComputationSummaryRow()
+    ComputationSummaryRow("", "")
 }
 
 @Preview(showBackground = true)

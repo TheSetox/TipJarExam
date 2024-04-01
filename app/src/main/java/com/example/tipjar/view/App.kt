@@ -3,13 +3,11 @@ package com.example.tipjar.view
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,8 +32,16 @@ import com.example.tipjar.view.screen.PaymentScreen
 fun App() {
     MaterialTheme {
         val navController = rememberNavController()
-        NavHost(navController = navController, startDestination = Route.Payment.name) {
-            composable(Route.Payment.name) {
+        NavHost(
+            modifier = Modifier.safeDrawingPadding(),
+            navController = navController,
+            startDestination = Route.Payment.name,
+        ) {
+            composable(
+                route = Route.Payment.name,
+                enterTransition = { enterFromLeftToRightAnimation() },
+                exitTransition = { exitFromRightToLeftAnimation() },
+            ) {
                 PaymentScreen(
                     navigate = {
                         // When history button is pressed
@@ -45,8 +51,8 @@ fun App() {
             }
             composable(
                 route = Route.History.name,
-                enterTransition = { fadeInAnimation() + slideToStartAnimation() },
-                exitTransition = { fadeOutAnimation() + slideOutAnimation() },
+                enterTransition = { enterFromRightToLeftAnimation() },
+                exitTransition = { exitFromLeftToRightAnimation() },
             ) {
                 HistoryScreen(
                     navigate = {
@@ -59,34 +65,28 @@ fun App() {
     }
 }
 
-private fun AnimatedContentTransitionScope<NavBackStackEntry>.slideToStartAnimation() =
+private fun AnimatedContentTransitionScope<NavBackStackEntry>.enterFromLeftToRightAnimation() =
     slideIntoContainer(
         animationSpec = tween(300, easing = EaseIn),
+        towards = AnimatedContentTransitionScope.SlideDirection.End,
+    )
+
+private fun AnimatedContentTransitionScope<NavBackStackEntry>.enterFromRightToLeftAnimation() =
+    slideIntoContainer(
+        animationSpec = tween(300, easing = EaseOut),
         towards = AnimatedContentTransitionScope.SlideDirection.Start,
     )
 
-private fun fadeInAnimation() =
-    fadeIn(
-        animationSpec =
-            tween(
-                durationMillis = 300,
-                easing = LinearEasing,
-            ),
-    )
-
-private fun AnimatedContentTransitionScope<NavBackStackEntry>.slideOutAnimation() =
+private fun AnimatedContentTransitionScope<NavBackStackEntry>.exitFromLeftToRightAnimation() =
     slideOutOfContainer(
         animationSpec = tween(300, easing = EaseOut),
         towards = AnimatedContentTransitionScope.SlideDirection.End,
     )
 
-private fun fadeOutAnimation() =
-    fadeOut(
-        animationSpec =
-            tween(
-                durationMillis = 300,
-                easing = LinearEasing,
-            ),
+private fun AnimatedContentTransitionScope<NavBackStackEntry>.exitFromRightToLeftAnimation() =
+    slideOutOfContainer(
+        animationSpec = tween(300, easing = EaseIn),
+        towards = AnimatedContentTransitionScope.SlideDirection.Start,
     )
 
 private enum class Route { History, Payment }

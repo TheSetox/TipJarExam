@@ -20,7 +20,7 @@ open class PaymentRepositoryTest {
     internal val defaultPaymentHistory =
         PaymentHistory(
             timestamp = "",
-            amount = defaultPayment.amount,
+            amount = defaultPayment.amount.toFloat(),
             tip = defaultPayment.totalTip,
             image = "",
         )

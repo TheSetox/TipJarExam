@@ -14,7 +14,7 @@ class SavePaymentTest : PaymentRepositoryTest() {
     private val paymentHistoryWithTimeStamp =
         PaymentHistory(
             timestamp = timeStamp,
-            amount = defaultPayment.amount,
+            amount = defaultPayment.amount.toFloat(),
             tip = defaultPayment.totalTip,
             image = "",
         )

@@ -10,9 +10,6 @@ interface PaymentHistoryDao {
     @Insert
     suspend fun insert(paymentHistory: PaymentHistory)
 
-    @Query("SELECT * FROM payment_history")
+    @Query("SELECT * FROM payment_history ORDER BY timestamp DESC")
     suspend fun getListOfPaymentHistory(): List<PaymentHistory>
-
-    @Query("SELECT * FROM payment_history WHERE timestamp = :id")
-    suspend fun getPaymentHistory(id: String): PaymentHistory
 }

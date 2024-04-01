@@ -39,8 +39,8 @@ import com.example.tipjar.view.labelTextStyle
 import com.example.tipjar.view.normalTextStyle
 import com.example.tipjar.view.subtitleTextStyle
 import com.example.tipjar.viewmodel.HistoryViewModel
-import com.example.tipjar.viewmodel.PaymentState
-import com.example.tipjar.viewmodel.PaymentState.Companion.showPreviewList
+import com.example.tipjar.viewmodel.PaymentHistoryState
+import com.example.tipjar.viewmodel.PaymentHistoryState.Companion.showPreviewList
 
 @Preview
 @Composable
@@ -54,8 +54,8 @@ fun HistoryScreenPreview() {
 fun PrepareScreen(
     onPreview: () -> Unit,
     onViewModel: @Composable () -> Unit,
-    loadScreen: @Composable () -> Unit,
     onDialog: @Composable () -> Unit,
+    loadScreen: @Composable () -> Unit,
 ) {
     if (LocalPreviewMode.current) {
         onPreview()
@@ -69,25 +69,35 @@ fun PrepareScreen(
 
 @Composable
 fun HistoryScreen(navigate: () -> Unit = {}) {
-    var paymentState: State<PaymentState> = remember { mutableStateOf(PaymentState.Empty) }
+    var paymentHistoryState: State<PaymentHistoryState> =
+        remember {
+            mutableStateOf(PaymentHistoryState.Empty)
+        }
     val shouldDialogShow = remember { mutableStateOf(false) }
     val paymentHistory = remember { mutableStateOf(PaymentHistory.defaultData()) }
 
     PrepareScreen(
-        onPreview = { paymentState = mutableStateOf(PaymentState.showPreviewList()) },
+        onPreview = { paymentHistoryState = mutableStateOf(PaymentHistoryState.showPreviewList()) },
         onViewModel = {
             val historyViewModel: HistoryViewModel = hiltViewModel()
-            paymentState = historyViewModel.state.collectAsState()
+            paymentHistoryState = historyViewModel.state.collectAsState()
             historyViewModel.getListOfPayments()
+        },
+        onDialog = {
+            if (shouldDialogShow.value) {
+                ViewPaymentHistoryDialog(paymentHistory.value) {
+                    shouldDialogShow.value = false
+                }
+            }
         },
         loadScreen = {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = { HistoryTopBar(navigate) },
                 content = { paddingValues ->
-                    when (val state = paymentState.value) {
-                        PaymentState.Empty -> {} // Do nothing
-                        is PaymentState.ShowList -> {
+                    when (val state = paymentHistoryState.value) {
+                        PaymentHistoryState.Empty -> {} // Do nothing
+                        is PaymentHistoryState.ShowList -> {
                             paddingValues.HistoryContent(state.list) { item ->
                                 shouldDialogShow.value = true
                                 paymentHistory.value = item
@@ -96,13 +106,6 @@ fun HistoryScreen(navigate: () -> Unit = {}) {
                     }
                 },
             )
-        },
-        onDialog = {
-            if (shouldDialogShow.value) {
-                ViewPaymentHistoryDialog(paymentHistory.value) {
-                    shouldDialogShow.value = false
-                }
-            }
         },
     )
 }

@@ -2,14 +2,15 @@ package com.example.tipjar.model.source
 
 import com.example.tipjar.model.entity.Computation
 import com.example.tipjar.model.entity.Payment
-import com.example.tipjar.model.entity.ValidateResult
 
 interface PaymentSource {
-    fun validateAmount(amount: Float): ValidateResult
+    fun updateAmount(amount: String): String
 
-    fun validateCountPerPerson(countPerPerson: Int): ValidateResult
+    fun updatePercentage(percentage: String): String
 
-    fun validatePercentage(percentage: Float): ValidateResult
+    fun addPerPerson(countPerPerson: Int): Int
+
+    fun reducePerPerson(countPerPerson: Int): Int
 
     fun computePayment(payment: Payment): Computation
 }

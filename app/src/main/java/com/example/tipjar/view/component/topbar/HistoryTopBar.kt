@@ -22,7 +22,6 @@ import com.example.tipjar.view.labelTextStyle
 fun HistoryTopBar(navigate: () -> Unit = {}) {
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         val modifier = Modifier.padding(8.dp)
-
         Text(modifier = modifier, text = "SAVED PAYMENTS", style = labelTextStyle)
         BackButton(modifier, navigate)
         HorizontalDivider(
@@ -36,7 +35,7 @@ fun HistoryTopBar(navigate: () -> Unit = {}) {
 @Composable
 private fun BoxScope.BackButton(
     modifier: Modifier,
-    navigate: () -> Unit = {},
+    navigate: () -> Unit,
 ) {
     Box(
         contentAlignment = Alignment.Center,

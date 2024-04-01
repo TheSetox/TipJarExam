@@ -1,65 +1,197 @@
 package com.example.tipjar.view.screen
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.tipjar.view.LocalPreviewMode
 import com.example.tipjar.view.component.payment.ComputationSummaryRow
 import com.example.tipjar.view.component.payment.EntryBox
 import com.example.tipjar.view.component.payment.PaymentActionRow
 import com.example.tipjar.view.component.payment.PeopleCounterRow
 import com.example.tipjar.view.component.payment.Position
 import com.example.tipjar.view.component.topbar.PaymentTopBar
+import com.example.tipjar.viewmodel.PaymentState
+import com.example.tipjar.viewmodel.PaymentState.Companion.getDefault
+import com.example.tipjar.viewmodel.PaymentViewModel
 
 @Preview(showBackground = true)
 @Composable
 fun PaymentScreenPreview() {
-    PaymentScreen()
+    CompositionLocalProvider(LocalPreviewMode provides true) {
+        PaymentScreen()
+    }
+}
+
+@Composable
+fun PrepareScreen(
+    onPreview: () -> Unit,
+    onViewModel: @Composable () -> Unit,
+    loadScreen: @Composable () -> Unit,
+) {
+    if (LocalPreviewMode.current) {
+        onPreview()
+    } else {
+        onViewModel()
+    }
+
+    loadScreen()
 }
 
 @Composable
 fun PaymentScreen(navigate: () -> Unit = {}) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = { PaymentTopBar(navigate) },
-        content = { it.PaymentContent() },
+    var amountState: State<String> = rememberSaveable { mutableStateOf("") }
+    var percentageState: State<String> = rememberSaveable { mutableStateOf("") }
+    var perPersonState: State<Int> = rememberSaveable { mutableIntStateOf(1) }
+    var computationState: State<PaymentState> =
+        remember {
+            mutableStateOf(PaymentState.getDefault())
+        }
+    var onAddPerPerson: Int.() -> Unit = {}
+    var onReducePerPerson: Int.() -> Unit = {}
+    var onAmountChanged: String.() -> Unit = {}
+    var onTipPercentageChanged: String.() -> Unit = {}
+    var onSavePayment: () -> Unit = {}
+
+    PrepareScreen(
+        onPreview = {},
+        onViewModel = {
+            val paymentViewModel: PaymentViewModel = hiltViewModel()
+            amountState = paymentViewModel.amountState.collectAsState()
+            percentageState = paymentViewModel.percentageState.collectAsState()
+            perPersonState = paymentViewModel.perPersonState.collectAsState()
+            computationState = paymentViewModel.state.collectAsState()
+            onAddPerPerson = paymentViewModel.addPerPerson()
+            onReducePerPerson = paymentViewModel.reducePerPerson()
+            onAmountChanged = paymentViewModel.changeAmount()
+            onTipPercentageChanged = paymentViewModel.changeTipPercentage()
+            onSavePayment = paymentViewModel.savePayment()
+        },
+        loadScreen = {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = { PaymentTopBar(navigate) },
+                content = {
+                    it.PaymentContent(
+                        amountState,
+                        percentageState,
+                        perPersonState,
+                        computationState,
+                        onAddPerPerson,
+                        onReducePerPerson,
+                        onAmountChanged,
+                        onTipPercentageChanged,
+                        onSavePayment,
+                    )
+                },
+            )
+        },
     )
 }
 
 @Composable
-private fun PaddingValues.PaymentContent() {
+private fun PaddingValues.PaymentContent(
+    amountState: State<String>,
+    percentageState: State<String>,
+    perPersonState: State<Int>,
+    computationState: State<PaymentState>,
+    onAddPerPerson: Int.() -> Unit,
+    onReducePerPerson: Int.() -> Unit,
+    onAmountChanged: String.() -> Unit,
+    onTipPercentageChanged: String.() -> Unit,
+    onSavePayment: () -> Unit,
+) {
     val spacerModifier = Modifier.padding(16.dp)
+    val totalTip = rememberSaveable { mutableFloatStateOf(0F) }
+    val tipPerPerson = rememberSaveable { mutableFloatStateOf(0F) }
+
+    when (val state = computationState.value) {
+        is PaymentState.ComputePayment -> {
+            totalTip.floatValue = state.computation.totalTip
+            tipPerPerson.floatValue = state.computation.tipPerPerson
+        }
+
+        is PaymentState.Default -> {
+            totalTip.floatValue = state.payment.totalTip
+            tipPerPerson.floatValue = state.payment.totalTipPerPerson
+        }
+
+        PaymentState.Error ->
+            Toast.makeText(LocalContext.current, "Error on saving", Toast.LENGTH_SHORT).show()
+
+        PaymentState.SavedPayment ->
+            Toast.makeText(LocalContext.current, "Saved Payment", Toast.LENGTH_SHORT).show()
+
+        PaymentState.ResetState -> Log.d("PaymentScreen", "PaymentContent: end state")
+    }
+
     Column(
         modifier =
             Modifier
                 .padding(top = calculateTopPadding())
                 .padding(horizontal = 20.dp)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .imePadding(),
     ) {
         EntryBox(
+            mainText = amountState.value,
             label = "Enter amount",
             hintText = "100.00",
             helperText = "$",
             helperPosition = Position.LEFT,
+            onValueChanged = onAmountChanged,
         )
         Spacer(spacerModifier)
-        PeopleCounterRow()
+        PeopleCounterRow(
+            counter = perPersonState.value,
+            onAddPeople = onAddPerPerson,
+            onReducePeople = onReducePerPerson,
+        )
         Spacer(spacerModifier)
         EntryBox(
+            mainText = percentageState.value,
             label = "% TIP",
             helperText = "%",
             hintText = "10.00",
             helperPosition = Position.RIGHT,
+            onValueChanged = onTipPercentageChanged,
         )
         Spacer(spacerModifier)
-        ComputationSummaryRow()
+        ComputationSummaryRow(
+            totalTip = "$ ${totalTip.floatValue}",
+            totalTipPerPerson = "$ ${tipPerPerson.floatValue}",
+        )
         Spacer(Modifier.weight(1f))
-        PaymentActionRow()
+        PaymentActionRow(
+            onSave = { isChecked ->
+                if (isChecked) {
+                    // TODO move to camera
+                } else {
+                    onSavePayment()
+                }
+            },
+        )
     }
 }

@@ -4,7 +4,6 @@ import android.content.Intent
 import com.example.tipjar.model.entity.Computation
 import com.example.tipjar.model.entity.Payment
 import com.example.tipjar.model.entity.PaymentHistory
-import com.example.tipjar.model.entity.Validation
 import com.example.tipjar.model.source.ImageSource
 import com.example.tipjar.model.source.LocalSource
 import com.example.tipjar.model.source.PaymentSource
@@ -20,11 +19,20 @@ class PaymentDataRepository
         private val paymentSource: PaymentSource,
         private val timeStampSource: TimeStampSource,
     ) : PaymentRepository {
-        override fun validatePayment(payment: Payment): Validation {
-            val validateAmount = paymentSource.validateAmount(payment.amount)
-            val validatePercentage = paymentSource.validatePercentage(payment.percentage)
-            val validateCountPerPerson = paymentSource.validateCountPerPerson(payment.countPerPerson)
-            return Validation(validateAmount, validateCountPerPerson, validatePercentage)
+        override fun updateAmount(amount: String): String {
+            return paymentSource.updateAmount(amount)
+        }
+
+        override fun updatePercentage(percentage: String): String {
+            return paymentSource.updatePercentage(percentage)
+        }
+
+        override fun addPerPerson(countPerPerson: Int): Int {
+            return paymentSource.addPerPerson(countPerPerson)
+        }
+
+        override fun reducePerPerson(countPerPerson: Int): Int {
+            return paymentSource.reducePerPerson(countPerPerson)
         }
 
         override fun computePayment(payment: Payment): Computation {
@@ -41,7 +49,7 @@ class PaymentDataRepository
             val paymentHistory =
                 PaymentHistory(
                     timestamp = timeStamp,
-                    amount = payment.amount,
+                    amount = payment.amount.toFloat(),
                     tip = payment.totalTip,
                     image = payment.imageFile,
                 )
@@ -49,11 +57,9 @@ class PaymentDataRepository
         }
 
         override suspend fun getListOfPayments(): List<PaymentHistory> {
-            return localSource.getListOfPayments()
-        }
-
-        override suspend fun getPayment(id: String): PaymentHistory {
-            return localSource.getPayment(id)
+            return localSource.getListOfPayments().map {
+                it.copy(timestamp = timeStampSource.convertTimeStamp(it.timestamp))
+            }
         }
 
         override fun getImageReceipt(id: String): File {

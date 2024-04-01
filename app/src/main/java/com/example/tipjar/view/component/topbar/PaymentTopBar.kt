@@ -38,7 +38,7 @@ fun PaymentTopBar(navigate: () -> Unit = {}) {
 @Composable
 private fun BoxScope.HistoryButton(
     modifier: Modifier,
-    navigate: () -> Unit = {},
+    navigate: () -> Unit,
 ) {
     Box(
         contentAlignment = Alignment.Center,

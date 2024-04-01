@@ -16,7 +16,7 @@ import com.example.tipjar.view.screen.PaymentScreen
 @Preview(showBackground = true)
 @Composable
 fun ComputationSummaryRowPreview() {
-    ComputationSummaryRow()
+    ComputationSummaryRow("$100", "$10")
 }
 
 @Preview(showBackground = true)
@@ -26,34 +26,40 @@ fun PaymentScreenForComputationSummaryPreview() {
 }
 
 @Composable
-fun ComputationSummaryRow() {
+fun ComputationSummaryRow(
+    totalTip: String,
+    totalTipPerPerson: String,
+) {
     Column {
         val modifier = Modifier.padding(8.dp)
         val textModifier = Modifier.weight(1F)
-
-        TotalTipText(textModifier)
+        TotalTipText(textModifier, totalTip)
         Spacer(modifier)
-        PerPersonText(textModifier)
+        PerPersonText(textModifier, totalTipPerPerson)
         Spacer(modifier)
     }
 }
 
 @Composable
-private fun TotalTipText(modifier: Modifier) {
+private fun TotalTipText(
+    modifier: Modifier,
+    totalTip: String,
+) {
     Row {
         Text(text = "Total Tip", style = labelTextStyle)
         Spacer(modifier)
-        // TODO Update text
-        Text(text = "$10.00", style = labelTextStyle)
+        Text(text = totalTip, style = labelTextStyle)
     }
 }
 
 @Composable
-fun PerPersonText(modifier: Modifier) {
+fun PerPersonText(
+    modifier: Modifier,
+    totalTipPerPerson: String,
+) {
     Row {
         Text(text = "Per Person", style = normalTextStyle)
         Spacer(modifier)
-        // TODO Update text
-        Text(text = "$10.00", style = normalTextStyle)
+        Text(text = totalTipPerPerson, style = normalTextStyle)
     }
 }

@@ -11,17 +11,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.tipjar.view.LocalPreviewMode
 import com.example.tipjar.view.editTextStyle
 import com.example.tipjar.view.hintTextStyle
 import com.example.tipjar.view.labelTextStyle
@@ -33,12 +33,14 @@ import com.example.tipjar.view.screen.PaymentScreen
 fun EntryBoxPreview() {
     Column {
         EntryBox(
+            mainText = "",
             label = "Enter amount",
             hintText = "100.00",
             helperText = "$",
             helperPosition = Position.LEFT,
         )
         EntryBox(
+            mainText = "",
             label = "% TIP",
             hintText = "10.00",
             helperText = "%",
@@ -50,34 +52,41 @@ fun EntryBoxPreview() {
 @Preview(showBackground = true)
 @Composable
 fun PaymentScreenForEntryBoxPreview() {
-    PaymentScreen()
+    CompositionLocalProvider(LocalPreviewMode provides true) {
+        PaymentScreen()
+    }
 }
 
 @Composable
 fun EntryBox(
+    mainText: String,
     label: String,
     hintText: String,
     helperText: String,
     helperPosition: Position,
+    onValueChanged: String.() -> Unit = {},
 ) {
     Column {
         Text(text = label, style = labelTextStyle)
         Spacer(Modifier.padding(8.dp))
         PaymentTextField(
+            mainText = mainText,
             hintText = hintText,
             helperText = helperText,
             helperPosition = helperPosition,
+            onValueChanged = onValueChanged,
         )
     }
 }
 
 @Composable
 private fun PaymentTextField(
+    mainText: String = "",
     hintText: String,
     helperText: String,
     helperPosition: Position,
+    onValueChanged: String.() -> Unit = {},
 ) {
-    var text by remember { mutableStateOf("") }
     Box(
         contentAlignment = Alignment.Center,
         modifier =
@@ -89,16 +98,19 @@ private fun PaymentTextField(
                     shape = RoundedCornerShape(16.dp),
                 ),
     ) {
+        val modifier = Modifier.padding(horizontal = 50.dp)
         HelperText(helperText, helperPosition)
-        Text(text = hintText, style = hintTextStyle)
+        if (mainText.isBlank()) Text(modifier = modifier, text = hintText, style = hintTextStyle)
         BasicTextField(
             singleLine = true,
-            modifier = Modifier.padding(start = 20.dp),
+            modifier = modifier.padding(start = 20.dp),
             textStyle = editTextStyle,
-            value = text,
-            onValueChange = {
-                text = it
-            },
+            keyboardOptions =
+                KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                ),
+            value = mainText,
+            onValueChange = { it.onValueChanged() },
         )
     }
 }

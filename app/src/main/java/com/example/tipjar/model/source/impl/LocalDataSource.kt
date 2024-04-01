@@ -15,6 +15,4 @@ class LocalDataSource
         }
 
         override suspend fun getListOfPayments() = paymentHistoryDao.getListOfPaymentHistory()
-
-        override suspend fun getPayment(id: String) = paymentHistoryDao.getPaymentHistory(id)
     }

@@ -6,6 +6,4 @@ interface LocalSource {
     suspend fun savePayment(paymentHistory: PaymentHistory)
 
     suspend fun getListOfPayments(): List<PaymentHistory>
-
-    suspend fun getPayment(id: String): PaymentHistory
 }

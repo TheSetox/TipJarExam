@@ -24,6 +24,24 @@ class GetListOfPaymentsTest : PaymentRepositoryTest() {
         }
 
     @Test
+    fun `when getListOfPayments is called, verify if timeStampSource method is called`() =
+        runTest {
+            // Arrange
+            timeStampSource = mock { on { convertTimeStamp("") } doReturn "" }
+            localSource = mock { onBlocking { getListOfPayments() } doReturn listOf(defaultPaymentHistory) }
+            initializeRepository(
+                currentLocalSource = localSource,
+                currentTimeStampSource = timeStampSource,
+            )
+
+            // Act
+            repository.getListOfPayments()
+
+            // Assert
+            verify(timeStampSource).convertTimeStamp("")
+        }
+
+    @Test
     fun `when getListOfPayments is empty, verify if the result is empty also`() =
         runTest {
             // Arrange
@@ -42,9 +60,13 @@ class GetListOfPaymentsTest : PaymentRepositoryTest() {
     fun `when getListOfPayments has one items, verify if the result is the same`() =
         runTest {
             // Arrange
+            timeStampSource = mock { on { convertTimeStamp("") } doReturn "" }
             localSource =
                 mock { onBlocking { getListOfPayments() } doReturn listOf(defaultPaymentHistory) }
-            initializeRepository(currentLocalSource = localSource)
+            initializeRepository(
+                currentLocalSource = localSource,
+                currentTimeStampSource = timeStampSource,
+            )
 
             // Act
             val result = repository.getListOfPayments()
@@ -58,9 +80,13 @@ class GetListOfPaymentsTest : PaymentRepositoryTest() {
     fun `when getListOfPayments has two and more items, verify if the result is the same`() =
         runTest {
             // Arrange
+            timeStampSource = mock { on { convertTimeStamp("") } doReturn "" }
             val listOfPayments = listOf(defaultPaymentHistory, defaultPaymentHistory)
             localSource = mock { onBlocking { getListOfPayments() } doReturn listOfPayments }
-            initializeRepository(currentLocalSource = localSource)
+            initializeRepository(
+                currentLocalSource = localSource,
+                currentTimeStampSource = timeStampSource,
+            )
 
             // Act
             val result = repository.getListOfPayments()
