@@ -27,3 +27,7 @@ We used AI to validate and get ideas with validating the payment form to be more
 ## PaymentRepositoryTesting
 
 We used AI to troubleshoot with mocking android api like Intent, extras, and Uri.
+
+$$ ImageDataSource
+
+Get more information about changes in Camera Intent and External Storages

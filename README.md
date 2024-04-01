@@ -1,11 +1,26 @@
 # TipJar
 
-TODO
+## Library
 
-## TipJar Architecture Draft
+- Compose for UI
+- Hilt for dependency Injection
+- Room for database
+- Coroutine and StateFlow
+- MVVM for architecture
 
-![architecture_draft.png](document/architecture_draft.png)
+## Others
 
-## UI Compose Draft
+- Added spotless to enforce coding guidelines.
+- Added kover for test coverage.
+- Added simple github action.
 
-![ui_compose_draft.png](document/ui_compose_draft.png)
+
+## TipJar Architecture
+
+![final_draft.png](document/final_draft.png)
+
+## Screenshot sample
+
+![initial_state.png](document/initial_state.png) ![filled_state.png](document/filled_state.png)
+
+![history.png](document/history.png) ![detail_view.png](document/detail_view.png)

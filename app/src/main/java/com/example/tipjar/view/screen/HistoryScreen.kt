@@ -163,7 +163,7 @@ fun HistorySummary(
         Text(text = paymentHistory.timestamp, style = labelTextStyle)
         Spacer(Modifier.padding(8.dp))
         Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.fillMaxWidth()) {
-            Text(text = "${paymentHistory.amount}", style = normalTextStyle)
+            Text(text = "$${paymentHistory.amount}", style = normalTextStyle)
             Spacer(Modifier.weight(1F))
             Text(text = "Tip: $${paymentHistory.tip}", style = subtitleTextStyle)
         }
