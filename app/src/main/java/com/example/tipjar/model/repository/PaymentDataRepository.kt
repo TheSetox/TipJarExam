@@ -59,10 +59,7 @@ class PaymentDataRepository
 
         override suspend fun getListOfPayments(): List<PaymentHistory> {
             return localSource.getListOfPayments().map {
-                it.copy(
-                    image = imageSource.getFileImage(it.timestamp).path,
-                    timestamp = timeStampSource.convertTimeStamp(it.timestamp),
-                )
+                it.copy(timestamp = timeStampSource.convertTimeStamp(it.timestamp))
             }
         }
 

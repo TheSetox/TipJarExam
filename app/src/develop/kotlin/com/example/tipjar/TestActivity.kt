@@ -47,6 +47,6 @@ class TestActivity : ComponentActivity() {
             delay(2000)
             Log.d("TestActivity2", "result: ${historyViewModel.state.value}")
         }
-        setContent { App(onViewModel = {}, onLaunchCamera = { _, _ ->}) }
+        setContent { App(onViewModel = {}, onLaunchCamera = { _, _ -> }) }
     }
 }
