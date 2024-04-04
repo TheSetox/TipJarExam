@@ -12,7 +12,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
@@ -26,7 +25,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.tipjar.view.LocalPreviewMode
 import com.example.tipjar.view.component.payment.ComputationSummaryRow
 import com.example.tipjar.view.component.payment.EntryBox
 import com.example.tipjar.view.component.payment.PaymentActionRow
@@ -36,28 +34,15 @@ import com.example.tipjar.view.component.topbar.PaymentTopBar
 import com.example.tipjar.viewmodel.PaymentState
 import com.example.tipjar.viewmodel.PaymentState.Companion.getDefault
 import com.example.tipjar.viewmodel.PaymentViewModel
+import com.thesetox.prepare.PreparePreview
+import com.thesetox.prepare.PrepareScreen
 
 @Preview(showBackground = true)
 @Composable
 fun PaymentScreenPreview() {
-    CompositionLocalProvider(LocalPreviewMode provides true) {
+    PreparePreview {
         PaymentScreen()
     }
-}
-
-@Composable
-fun PrepareScreen(
-    onPreview: () -> Unit,
-    onViewModel: @Composable () -> Unit,
-    loadScreen: @Composable () -> Unit,
-) {
-    if (LocalPreviewMode.current) {
-        onPreview()
-    } else {
-        onViewModel()
-    }
-
-    loadScreen()
 }
 
 @Composable
@@ -82,7 +67,7 @@ fun PaymentScreen(
 
     PrepareScreen(
         onPreview = {},
-        onViewModel = {
+        prepareData = {
             val paymentViewModel: PaymentViewModel = hiltViewModel()
             amountState = paymentViewModel.amountState.collectAsState()
             percentageState = paymentViewModel.percentageState.collectAsState()

@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -32,7 +31,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tipjar.R
 import com.example.tipjar.model.entity.PaymentHistory
 import com.example.tipjar.model.entity.PaymentHistory.Companion.defaultData
-import com.example.tipjar.view.LocalPreviewMode
 import com.example.tipjar.view.component.history.ViewPaymentHistoryDialog
 import com.example.tipjar.view.component.topbar.HistoryTopBar
 import com.example.tipjar.view.labelTextStyle
@@ -41,30 +39,15 @@ import com.example.tipjar.view.subtitleTextStyle
 import com.example.tipjar.viewmodel.HistoryViewModel
 import com.example.tipjar.viewmodel.PaymentHistoryState
 import com.example.tipjar.viewmodel.PaymentHistoryState.Companion.showPreviewList
+import com.thesetox.prepare.PreparePreview
+import com.thesetox.prepare.PrepareScreen
 
 @Preview
 @Composable
 fun HistoryScreenPreview() {
-    CompositionLocalProvider(LocalPreviewMode provides true) {
+    PreparePreview {
         HistoryScreen()
     }
-}
-
-@Composable
-fun PrepareScreen(
-    onPreview: () -> Unit,
-    onViewModel: @Composable () -> Unit,
-    onDialog: @Composable () -> Unit,
-    loadScreen: @Composable () -> Unit,
-) {
-    if (LocalPreviewMode.current) {
-        onPreview()
-    } else {
-        onViewModel()
-    }
-
-    loadScreen()
-    onDialog()
 }
 
 @Composable
@@ -78,7 +61,7 @@ fun HistoryScreen(navigate: () -> Unit = {}) {
 
     PrepareScreen(
         onPreview = { paymentHistoryState = mutableStateOf(PaymentHistoryState.showPreviewList()) },
-        onViewModel = {
+        prepareData = {
             val historyViewModel: HistoryViewModel = hiltViewModel()
             paymentHistoryState = historyViewModel.state.collectAsState()
             historyViewModel.getListOfPayments()
@@ -121,6 +104,7 @@ private fun PaddingValues.HistoryContent(
                 .padding(top = calculateTopPadding())
                 .fillMaxWidth(),
     ) {
+        item { }
         items(listOfPayment) { HistoryItem(it, onView) }
     }
 }
