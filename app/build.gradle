@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.tipjar"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -81,4 +81,7 @@ dependencies {
 
     //Image loader
     implementation("io.coil-kt:coil-compose:2.6.0")
+
+    //My remote library
+    implementation 'com.thesetox.prepare:core:1.0.0'
 }

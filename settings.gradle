@@ -10,6 +10,20 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/TheSetox/Prepare")
+            def localProperties = new Properties()
+            new FileInputStream("local.properties").withStream { fileInputStream ->
+                localProperties.load(fileInputStream)
+            }
+            def user = localProperties.getProperty("gpr.user")
+            def token = localProperties.getProperty("gpr.key")
+            credentials {
+                username = user ?: System.getenv("USERNAME")
+                password = token ?: System.getenv("TOKEN")
+            }
+        }
     }
 }
 

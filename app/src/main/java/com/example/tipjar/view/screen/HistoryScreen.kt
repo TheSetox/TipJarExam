@@ -23,7 +23,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,7 +45,6 @@ import com.example.tipjar.model.entity.PaymentHistory.Companion.defaultData
 import com.example.tipjar.model.entity.PaymentHistory.Companion.search
 import com.example.tipjar.util.convertTimeStampToDate
 import com.example.tipjar.util.floatToCurrency
-import com.example.tipjar.view.LocalPreviewMode
 import com.example.tipjar.view.component.history.ViewPaymentHistoryDialog
 import com.example.tipjar.view.component.topbar.HistoryTopBar
 import com.example.tipjar.view.labelTextStyle
@@ -55,30 +53,15 @@ import com.example.tipjar.view.subtitleTextStyle
 import com.example.tipjar.viewmodel.HistoryViewModel
 import com.example.tipjar.viewmodel.PaymentHistoryState
 import com.example.tipjar.viewmodel.PaymentHistoryState.Companion.showPreviewList
+import com.thesetox.prepare.Prepare
+import com.thesetox.prepare.PreparePreview
 
 @Preview
 @Composable
 fun HistoryScreenPreview() {
-    CompositionLocalProvider(LocalPreviewMode provides true) {
+    PreparePreview {
         HistoryScreen()
     }
-}
-
-@Composable
-fun PrepareScreen(
-    onPreview: () -> Unit,
-    onViewModel: @Composable () -> Unit,
-    onDialog: @Composable () -> Unit,
-    loadScreen: @Composable () -> Unit,
-) {
-    if (LocalPreviewMode.current) {
-        onPreview()
-    } else {
-        onViewModel()
-    }
-
-    loadScreen()
-    onDialog()
 }
 
 @Composable
@@ -92,15 +75,15 @@ fun HistoryScreen(navigate: () -> Unit = {}) {
 
     var deletePayment: (String) -> Unit = {}
 
-    PrepareScreen(
-        onPreview = { paymentHistoryState = mutableStateOf(PaymentHistoryState.showPreviewList()) },
-        onViewModel = {
+    Prepare(
+        preview = { paymentHistoryState = mutableStateOf(PaymentHistoryState.showPreviewList()) },
+        data = {
             val historyViewModel: HistoryViewModel = hiltViewModel()
             paymentHistoryState = historyViewModel.state.collectAsState()
             historyViewModel.getListOfPayments()
             deletePayment = historyViewModel.deletePayment()
         },
-        onDialog = {
+        dialog = {
             val context = LocalContext.current
             if (shouldDialogShow.value) {
                 ViewPaymentHistoryDialog(
@@ -118,7 +101,7 @@ fun HistoryScreen(navigate: () -> Unit = {}) {
                 )
             }
         },
-        loadScreen = {
+        screen = {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = { HistoryTopBar(navigate) },
