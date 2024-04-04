@@ -14,18 +14,19 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.tipjar.view.LocalPreviewMode
 import com.example.tipjar.view.editTextStyle
 import com.example.tipjar.view.hintTextStyle
 import com.example.tipjar.view.labelTextStyle
 import com.example.tipjar.view.normalTextStyle
 import com.example.tipjar.view.screen.PaymentScreen
-import com.thesetox.prepare.PreparePreview
 
 @Preview(showBackground = true)
 @Composable
@@ -51,7 +52,7 @@ fun EntryBoxPreview() {
 @Preview(showBackground = true)
 @Composable
 fun PaymentScreenForEntryBoxPreview() {
-    PreparePreview {
+    CompositionLocalProvider(LocalPreviewMode provides true) {
         PaymentScreen()
     }
 }
