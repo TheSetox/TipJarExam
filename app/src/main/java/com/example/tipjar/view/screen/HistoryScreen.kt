@@ -32,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tipjar.R
 import com.example.tipjar.model.entity.PaymentHistory
 import com.example.tipjar.model.entity.PaymentHistory.Companion.defaultData
+import com.example.tipjar.util.floatToCurrency
 import com.example.tipjar.view.LocalPreviewMode
 import com.example.tipjar.view.component.history.ViewPaymentHistoryDialog
 import com.example.tipjar.view.component.topbar.HistoryTopBar
@@ -163,9 +164,9 @@ fun HistorySummary(
         Text(text = paymentHistory.timestamp, style = labelTextStyle)
         Spacer(Modifier.padding(8.dp))
         Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.fillMaxWidth()) {
-            Text(text = "$${paymentHistory.amount}", style = normalTextStyle)
+            Text(text = paymentHistory.amount.floatToCurrency(), style = normalTextStyle)
             Spacer(Modifier.weight(1F))
-            Text(text = "Tip: $${paymentHistory.tip}", style = subtitleTextStyle)
+            Text(text = "Tip: ${paymentHistory.tip.floatToCurrency()}", style = subtitleTextStyle)
         }
     }
 }

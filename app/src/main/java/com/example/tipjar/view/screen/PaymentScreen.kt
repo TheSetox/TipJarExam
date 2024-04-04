@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.tipjar.util.floatToCurrency
 import com.example.tipjar.view.LocalPreviewMode
 import com.example.tipjar.view.component.payment.ComputationSummaryRow
 import com.example.tipjar.view.component.payment.EntryBox
@@ -176,8 +177,8 @@ private fun PaddingValues.PaymentContent(
         )
         Spacer(spacerModifier)
         ComputationSummaryRow(
-            totalTip = "$ ${totalTip.floatValue}",
-            totalTipPerPerson = "$ ${tipPerPerson.floatValue}",
+            totalTip = totalTip.floatValue.floatToCurrency(),
+            totalTipPerPerson = tipPerPerson.floatValue.floatToCurrency(),
         )
         Spacer(Modifier.weight(1f))
         PaymentActionRow(
