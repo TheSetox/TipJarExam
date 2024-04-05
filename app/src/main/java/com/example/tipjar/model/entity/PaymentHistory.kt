@@ -2,6 +2,8 @@ package com.example.tipjar.model.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import com.example.tipjar.util.convertTimeStampToDate
+import com.example.tipjar.util.floatToCurrency
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -27,6 +29,17 @@ data class PaymentHistory(
 
         fun Companion.previewList(): Flow<List<PaymentHistory>> {
             return flow { listOf(previewData(), previewData2()) }
+        }
+
+        fun Companion.search(
+            paymentHistory: PaymentHistory,
+            searchedText: String,
+        ): Boolean {
+            return paymentHistory.timestamp.convertTimeStampToDate().contains(searchedText) ||
+                paymentHistory.tip.floatToCurrency().contains(searchedText) ||
+                paymentHistory.tip.toString().contains(searchedText) ||
+                paymentHistory.amount.floatToCurrency().contains(searchedText) ||
+                paymentHistory.amount.toString().contains(searchedText)
         }
     }
 }

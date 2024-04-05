@@ -11,7 +11,6 @@ fun Float.floatToCurrency(): String {
 }
 
 fun String.convertTimeStampToDate(): String {
-    val format = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
-    val formattedDate = format.format(Date(this.toLong()))
-    return formattedDate
+    val format = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
+    return format.format(Date(toLong()))
 }
