@@ -8,6 +8,7 @@ import com.example.tipjar.model.source.ImageSource
 import com.example.tipjar.model.source.LocalSource
 import com.example.tipjar.model.source.PaymentSource
 import com.example.tipjar.model.source.TimeStampSource
+import kotlinx.coroutines.flow.Flow
 import java.io.File
 import javax.inject.Inject
 
@@ -57,13 +58,15 @@ class PaymentDataRepository
             localSource.savePayment(paymentHistory)
         }
 
-        override suspend fun getListOfPayments(): List<PaymentHistory> {
-            return localSource.getListOfPayments().map {
-                it.copy(timestamp = timeStampSource.convertTimeStamp(it.timestamp))
-            }
+        override suspend fun getListOfPayments(): Flow<List<PaymentHistory>> {
+            return localSource.getListOfPayments()
         }
 
         override fun getImageReceipt(id: String): File {
             return imageSource.getFileImage(id)
+        }
+
+        override suspend fun deletePayment(timeStamp: String) {
+            localSource.deletePayment(timeStamp)
         }
     }

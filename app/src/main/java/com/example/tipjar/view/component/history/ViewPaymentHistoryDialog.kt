@@ -29,12 +29,23 @@ import com.example.tipjar.view.screen.HistorySummary
 @Preview(showBackground = true)
 @Composable
 fun ViewPaymentHistoryDialogPreview() {
-    ViewPaymentHistoryDialog(PaymentHistory(timestamp = "", amount = 0F, tip = 0F, image = ""), {})
+    ViewPaymentHistoryDialog(
+        paymentHistory =
+            PaymentHistory(
+                timestamp = "",
+                amount = 0F,
+                tip = 0F,
+                image = "",
+            ),
+        onDelete = {},
+        onDismiss = {},
+    )
 }
 
 @Composable
 fun ViewPaymentHistoryDialog(
     paymentHistory: PaymentHistory,
+    onDelete: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     Dialog(
@@ -57,7 +68,7 @@ fun ViewPaymentHistoryDialog(
                 HistorySummary(paymentHistory)
             }
             Spacer(Modifier.size(12.dp))
-            DeletePaymentButton {}
+            DeletePaymentButton(onDelete)
         }
     }
 }

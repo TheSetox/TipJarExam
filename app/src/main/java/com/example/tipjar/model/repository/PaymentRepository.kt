@@ -4,6 +4,7 @@ import com.example.tipjar.model.entity.Computation
 import com.example.tipjar.model.entity.Payment
 import com.example.tipjar.model.entity.PaymentHistory
 import com.example.tipjar.model.entity.ReceiptImage
+import kotlinx.coroutines.flow.Flow
 import java.io.File
 
 interface PaymentRepository {
@@ -21,7 +22,9 @@ interface PaymentRepository {
 
     suspend fun savePayment(payment: Payment)
 
-    suspend fun getListOfPayments(): List<PaymentHistory>
+    suspend fun getListOfPayments(): Flow<List<PaymentHistory>>
 
     fun getImageReceipt(id: String): File
+
+    suspend fun deletePayment(timeStamp: String)
 }

@@ -1,5 +1,6 @@
 package com.example.tipjar.view.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tipjar.R
 import com.example.tipjar.model.entity.PaymentHistory
 import com.example.tipjar.model.entity.PaymentHistory.Companion.defaultData
+import com.example.tipjar.util.convertTimeStampToDate
 import com.example.tipjar.util.floatToCurrency
 import com.example.tipjar.view.LocalPreviewMode
 import com.example.tipjar.view.component.history.ViewPaymentHistoryDialog
@@ -77,18 +80,32 @@ fun HistoryScreen(navigate: () -> Unit = {}) {
     val shouldDialogShow = remember { mutableStateOf(false) }
     val paymentHistory = remember { mutableStateOf(PaymentHistory.defaultData()) }
 
+    var deletePayment: (String) -> Unit = {}
+
     PrepareScreen(
         onPreview = { paymentHistoryState = mutableStateOf(PaymentHistoryState.showPreviewList()) },
         onViewModel = {
             val historyViewModel: HistoryViewModel = hiltViewModel()
             paymentHistoryState = historyViewModel.state.collectAsState()
             historyViewModel.getListOfPayments()
+            deletePayment = historyViewModel.deletePayment()
         },
         onDialog = {
+            val context = LocalContext.current
             if (shouldDialogShow.value) {
-                ViewPaymentHistoryDialog(paymentHistory.value) {
-                    shouldDialogShow.value = false
-                }
+                ViewPaymentHistoryDialog(
+                    paymentHistory = paymentHistory.value,
+                    onDelete = {
+                        deletePayment(paymentHistory.value.timestamp)
+                        Toast.makeText(
+                            context.applicationContext,
+                            "deleted",
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                        shouldDialogShow.value = false
+                    },
+                    onDismiss = { shouldDialogShow.value = false },
+                )
             }
         },
         loadScreen = {
@@ -99,7 +116,8 @@ fun HistoryScreen(navigate: () -> Unit = {}) {
                     when (val state = paymentHistoryState.value) {
                         PaymentHistoryState.Empty -> {} // Do nothing
                         is PaymentHistoryState.ShowList -> {
-                            paddingValues.HistoryContent(state.list) { item ->
+                            val list = state.list.collectAsState(emptyList())
+                            paddingValues.HistoryContent(list.value) { item ->
                                 shouldDialogShow.value = true
                                 paymentHistory.value = item
                             }
@@ -161,7 +179,7 @@ fun HistorySummary(
     Column(
         modifier.padding(16.dp),
     ) {
-        Text(text = paymentHistory.timestamp, style = labelTextStyle)
+        Text(text = paymentHistory.timestamp.convertTimeStampToDate(), style = labelTextStyle)
         Spacer(Modifier.padding(8.dp))
         Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.fillMaxWidth()) {
             Text(text = paymentHistory.amount.floatToCurrency(), style = normalTextStyle)

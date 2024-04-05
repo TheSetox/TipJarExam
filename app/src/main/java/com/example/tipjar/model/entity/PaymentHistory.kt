@@ -2,6 +2,8 @@ package com.example.tipjar.model.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 @Entity(tableName = "payment_history", primaryKeys = ["timestamp"])
 data class PaymentHistory(
@@ -23,8 +25,8 @@ data class PaymentHistory(
             return PaymentHistory("February 21, 2024", 200F, 20F, "")
         }
 
-        fun Companion.previewList(): List<PaymentHistory> {
-            return listOf(previewData(), previewData2())
+        fun Companion.previewList(): Flow<List<PaymentHistory>> {
+            return flow { listOf(previewData(), previewData2()) }
         }
     }
 }
