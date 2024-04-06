@@ -14,11 +14,16 @@ dependencyResolutionManagement {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/TheSetox/Prepare")
             def localProperties = new Properties()
-            new FileInputStream("local.properties").withStream { fileInputStream ->
-                localProperties.load(fileInputStream)
+            try {
+                new FileInputStream("local.properties").withStream { fileInputStream ->
+                    localProperties.load(fileInputStream)
+                }
+            } catch (FileNotFoundException ignored) {
+                // If local.properties file is not found, log a message and continue
+                println("local.properties file not found, using system environment variables.")
             }
-            def user = localProperties.getProperty("gpr.user")
-            def token = localProperties.getProperty("gpr.key")
+            def user = localProperties.getProperty("gpr.user") ?: System.getenv("USERNAME")
+            def token = localProperties.getProperty("gpr.key") ?: System.getenv("TOKEN")
             credentials {
                 username = user ?: System.getenv("USERNAME")
                 password = token ?: System.getenv("TOKEN")
